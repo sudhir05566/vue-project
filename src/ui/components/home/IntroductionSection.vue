@@ -15,7 +15,7 @@
 </template>
 
 <script>
-export default {};
+export default {}
 </script>
 
 <style scoped>
@@ -68,7 +68,7 @@ h2 {
 }
 
 .watch-video-btn:hover {
-  background-color: #e00044; 
+  background-color: #e00044;
 }
 
 @media (max-width: 600px) {
@@ -84,7 +84,7 @@ h2 {
   }
 
   .play-icon {
-    font-size: 16px; 
+    font-size: 16px;
   }
 }
 </style>
