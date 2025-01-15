@@ -30,42 +30,7 @@
               placeholder="Search School Here..."
               class="search-input"
             />
-            <div
-              v-if="showDropdown && filteredSchools.length > 0"
-              class="dropdown"
-            >
-              <ul>
-                <li
-                  v-for="school in filteredSchools"
-                  :key="school.id"
-                  class="dropdown-item"
-                >
-                  <div class="dropdown-content">
-                    <img
-                      :src="school.logo || fallbackLogo"
-                      alt="School Logo"
-                      class="school-logo"
-                      @click="selectSchool(school)"
-                    />
-                    <span @click="selectSchool(school)">
-                      {{ school.school_name }}
-                    </span>
-                    <button
-                      @click.stop="selectSchool(school)"
-                      class="action-button"
-                    >
-                      Join Campaign
-                    </button>
-                  </div>
-                </li>
-              </ul>
-            </div>
-            <div
-              v-else-if="showDropdown && !filteredSchools.length"
-              class="dropdown"
-            >
-              <p>No schools found.</p>
-            </div>
+            
           </div>
         </div>
 
@@ -103,7 +68,7 @@
                   </button>
                 </td>
               </tr>
-              <tr v-if="!filteredSchools.length">
+              <tr v-if="filteredSchools.length<=0">
                 <td colspan="4" style="text-align: center; padding: 8px;">
                   No schools found.
                 </td>
