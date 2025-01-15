@@ -3,8 +3,8 @@
     <div class="content-box">
       <section class="call-to-action">
         <!-- Main Heading -->
-        <h2>Are you ready to take the challenge?</h2>
-        <p>Download Hariem Wizards App</p>
+        <h2 class="introheading">Are you ready to take the challenge?</h2>
+        <p class="intropara">Download Hariem Wizards App</p>
 
         <!-- App Download Section -->
         <div class="app-download">
@@ -194,6 +194,10 @@ export default {
   margin: 10px;
 }
 
+.introheading, intropara{
+          color: hsl(346.89deg 64.26% 46.08%);
+        }
+
 /* Divider with text */
 .divider-text {
   display: flex;
@@ -257,7 +261,7 @@ th {
 /* Action button */
 .action-button {
   background-color: white;
-  color: hsl(346.89deg 64.26% 46.08%);
+  color: hsl(346.89deg 64.26% 46.08%)!important;
   border: none;
   padding: 4px 8px;
   border-radius: 4px;

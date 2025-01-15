@@ -32,7 +32,7 @@ export default {}
   margin-right: auto;
 }
 h2 {
-  color: hsl(346.89deg 64.26% 46.08%);
+  color: hsl(346.89deg 64.26% 46.08%)!important;
   font-size: 25px;
   font-weight: bold;
 }
