@@ -1,3 +1,4 @@
+
 <template>
   <div class="container">
     <div class="content-box">
@@ -25,8 +26,6 @@
             <input
               type="text"
               v-model="searchQuery"
-              @focus="showDropdown = true"
-              @blur="hideDropdown"
               @input="filterSchools"
               placeholder="Search School Here..."
               class="search-input"
@@ -70,7 +69,49 @@
           </div>
         </div>
 
-      
+        <!-- Table Section -->
+        <div>
+          <table
+            style="border: 1px solid gray; width: 100%; text-align: left; border-collapse: collapse;"
+          >
+            <thead>
+              <tr>
+                <th style="border: 1px solid gray; padding: 8px;">SN</th>
+                <th style="border: 1px solid gray; padding: 8px;">School Logo</th>
+                <th style="border: 1px solid gray; padding: 8px;">School Name</th>
+                <th style="border: 1px solid gray; padding: 8px;">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-for="(school, index) in filteredSchools" :key="school.id">
+                <td style="border: 1px solid gray; padding: 8px;">
+                  {{ index + 1 }}
+                </td>
+                <td style="border: 1px solid gray; padding: 8px;">
+                  <img
+                    :src="school.logo || fallbackLogo"
+                    alt="School Logo"
+                    class="school-logo"
+                  />
+                </td>
+                <td style="border: 1px solid gray; padding: 8px;">
+                  {{ school.school_name }}
+                </td>
+                <td style="border: 1px solid gray; padding: 8px;">
+                  <button @click="selectSchool(school)" class="action-button">
+                    Join Campaign
+                  </button>
+                </td>
+              </tr>
+              <tr v-if="!filteredSchools.length">
+                <td colspan="4" style="text-align: center; padding: 8px;">
+                  No schools found.
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
         <div v-if="isLoading" class="loading">Loading schools...</div>
         <div v-if="error" class="error">{{ error }}</div>
       </section>
@@ -80,6 +121,7 @@
 
 <script>
 import axios from "axios";
+import debounce from "lodash/debounce";
 
 export default {
   data() {
@@ -94,13 +136,16 @@ export default {
     };
   },
   methods: {
-    async fetchSchools() {
+    async fetchSchools(search) {
       this.isLoading = true;
       this.error = null;
+      let URL =
+        "https://api.devharlemwizardsinabox.com/campaign/campaign_school_list/";
+      if (search) {
+        URL = `${URL}?search=${search}`;
+      }
       try {
-        const response = await axios.get(
-          "https://api.devharlemwizardsinabox.com/campaign/campaign_school_list/"
-        );
+        const response = await axios.get(URL);
         if (response.data && response.data.school_list) {
           this.schools = response.data.school_list;
           this.filteredSchools = this.schools;
@@ -114,32 +159,35 @@ export default {
         this.isLoading = false;
       }
     },
+    debounce(func, delay) {
+      let timer;
+      return function (...args) {
+        clearTimeout(timer);
+        timer = setTimeout(() => func.apply(this, args), delay);
+      };
+    },
     filterSchools() {
-      const query = this.searchQuery.toLowerCase();
-      this.filteredSchools = this.schools.filter((school) =>
-        school.school_name.toLowerCase().includes(query)
-      );
+      const debouncedFetch = this.debounce(() => {
+        const query = this.searchQuery.toLowerCase();
+        this.fetchSchools(query);
+      }, 300); // Adjust the delay as needed
+      debouncedFetch();
     },
     selectSchool(school) {
       alert(`Selected School: ${school.school_name}`);
       this.searchQuery = school.school_name;
       this.showDropdown = false;
     },
-    hideDropdown() {
-      setTimeout(() => {
-        this.showDropdown = false;
-      }, 200);
-    },
+  
     handleImageError(event) {
       event.target.src = this.fallbackLogo;
     },
   },
   mounted() {
-    this.fetchSchools();
+    this.fetchSchools("");
   },
 };
 </script>
-
 
 <style scoped>
 .loading {
@@ -152,6 +200,28 @@ export default {
   text-align: center;
   color: red;
   margin-top: 10px;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+}
+
+th, td {
+  border: 1px solid gray;
+  padding: 8px;
+  text-align: left;
+}
+
+th {
+  background-color: #f5f5f5;
+}
+
+.school-logo {
+  width: 50px;
+  height: 50px;
+  object-fit: cover;
 }
 
 /* Main container */
@@ -171,7 +241,7 @@ export default {
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   padding: 10px;
   max-width: 600px;
-  height: 300px;
+  /* height: 300px; */
   width: 100%;
 }
 
@@ -225,6 +295,8 @@ h2 {
 .searchbar {
   display: flex;
   justify-content: center;
+  margin-bottom: 30px;
+  padding: 30px;
 }
 
 .search-bar-dropdown {
